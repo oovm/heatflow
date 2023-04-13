@@ -5,4 +5,4 @@ pub use errors::{Error, Result};
 
 mod queue;
 
-pub use self::queue::{Circular, iters::{GetCircular, MutCircular}};
+pub use crate::queue::{Circular, iters::{GetCircular, MutCircular}};

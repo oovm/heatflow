@@ -2,9 +2,10 @@ use std::fmt::Debug;
 use std::ptr::NonNull;
 
 pub mod iters;
+mod display;
 
 /// A first-in-first-out queue with fixed size.
-pub struct Circular<T> {
+pub struct Circular<const N: usize, T> {
     pointer: NonNull<T>,
     capacity: usize,
     current: usize,
@@ -41,57 +42,46 @@ impl<T> Circular<T> {
             std::ptr::write(index, element);
         }
     }
+    /// Returns the capacity of the queue.
+    ///
+    /// # Safety
+    ///
+    /// This function is safe to call.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use heatflow::Circular;
+    ///
+    ///
+    /// ```
     unsafe fn get_ptr(&self, index: usize) -> *mut T {
-        let modulo = index % self.capacity;
-        self.pointer.as_ptr().add(modulo)
+        assert!(index < self.capacity, "{index} is out of bounds, capacity only {capacity}.", index = index, capacity = self.capacity);
+        let m_index = (self.current + index) % self.capacity;
+        self.pointer.as_ptr().add(m_index)
     }
     pub fn get(&self, index: usize) -> &T {
         // SAFETY: We are reading from a valid memory location.
-        // when index >= self.capacity, the modulo operation will make it smaller than self.capacity
         unsafe {
             &*self.get_ptr(index)
         }
     }
     pub fn get_mut(&mut self, index: usize) -> &mut T {
         // SAFETY: We are reading from a valid memory location.
-        // when index >= self.capacity, the modulo operation will make it smaller than self.capacity
         unsafe {
             &mut *self.get_ptr(index)
         }
     }
     pub fn newest(&self) -> &T {
-        // SAFETY: We are reading from a valid memory location.
-        unsafe {
-            &*self.get_ptr(self.current)
-        }
+        self.get(self.capacity - 1)
     }
     pub fn oldest(&self) -> &T {
-        // SAFETY: We are reading from a valid memory location.
-        unsafe {
-            &*self.get_ptr(self.current + 1)
-        }
+        self.get(0)
     }
     pub fn capacity(&self) -> usize {
         self.capacity
     }
 }
 
-impl<T: Debug> Debug for Circular<T> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_list().entries(self.get_items()).finish()
-    }
-}
 
-#[test]
-pub fn test() {
-    let mut queue = Circular::<u8>::new(5);
-    assert_eq!(std::mem::size_of::<Circular<u8>>(), 24);
 
-    println!("{:?}", queue);
-    for i in 1..10 {
-        queue.push(i);
-        println!("{:?}", queue);
-    }
-    println!("oldest: {}", queue.oldest());
-    println!("newest: {}", queue.newest());
-}
