@@ -8,3 +8,4 @@ mod heat_flow;
 
 pub use crate::queue::{Circular, iters::{GetCircular, MutCircular}};
 pub use crate::heat_flow::{HeatFlow, iters::{HeatFlowViewZ}};
+pub use shape_core::{Rectangle, Point};

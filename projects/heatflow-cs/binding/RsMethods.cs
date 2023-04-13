@@ -12,14 +12,24 @@ namespace RsBind
     {
         const string __DllName = "rs_heatflow";
 
-        [DllImport(__DllName, EntryPoint = "create_counter_context", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void* create_counter_context();
+        /// <summary>Returns a new [`HeatFlow`]</summary>
+        [DllImport(__DllName, EntryPoint = "create_heat_flow", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void* create_heat_flow(float x, float y, float w, float h, float resolution, nuint max_time);
 
-        [DllImport(__DllName, EntryPoint = "insert_counter_context", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void insert_counter_context(void* context, int value);
+        [DllImport(__DllName, EntryPoint = "delete_heat_flow", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void delete_heat_flow(void* heat_flow);
 
-        [DllImport(__DllName, EntryPoint = "delete_counter_context", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void delete_counter_context(void* context);
+        [DllImport(__DllName, EntryPoint = "heat_flow_as_heat_map", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void* heat_flow_as_heat_map(void* heat_flow);
+
+        [DllImport(__DllName, EntryPoint = "heat_flow_time_fly", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void heat_flow_time_fly(void* heat_flow);
+
+        [DllImport(__DllName, EntryPoint = "heat_flow_sampling", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void heat_flow_sampling(void* heat_flow, float x, float y, float weight);
+
+        [DllImport(__DllName, EntryPoint = "heat_flow_get_w", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern nuint heat_flow_get_w(void* heat_flow);
 
 
     }

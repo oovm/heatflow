@@ -11,7 +11,8 @@ pub fn build_cs() -> std::io::Result<()> {
     let here = Path::new(env!("CARGO_MANIFEST_DIR")).canonicalize()?;
     println!("Working directory: {}", here.display());
     csbindgen::Builder::default()
-        .input_extern_file(here.join("src/lib.rs").canonicalize()?.to_string_lossy())        // required
+        .input_extern_file(here.join("src/heat_flow.rs").canonicalize()?.to_string_lossy())   // required
+        .input_extern_file(here.join("src/heat_map.rs").canonicalize()?.to_string_lossy())    // required
         .csharp_dll_name("rs_heatflow")         // required
         .csharp_class_name("RsMethods")     // optional, default: NativeMethods
         .csharp_namespace("RsBind")          // optional, default: CsBindgen
