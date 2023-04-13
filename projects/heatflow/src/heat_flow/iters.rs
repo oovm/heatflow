@@ -26,13 +26,13 @@ impl<'i> Iterator for HeatFlowViewZ<'i> {
         if self.current_y >= self.tensor.get_h() {
             return None;
         }
+        let point = Point::new(self.current_x, self.current_y);
         let result = self.tensor.slice_z(self.current_x, self.current_y);
         self.current_x += 1;
         if self.current_x >= self.tensor.get_w() {
             self.current_x = 0;
             self.current_y += 1;
         }
-        let point = Point::new(self.current_x, self.current_y);
         Some((point, result))
     }
 }
@@ -44,9 +44,10 @@ impl<'i> Iterator for HeatFlowViewXY<'i> {
         if self.current_z >= self.tensor.get_h() {
             return None;
         }
+        let z = self.current_z;
         let result = self.tensor.slice_xy(self.current_z);
         self.current_z += 1;
-        Some((self.current_z, result))
+        Some((z, result))
     }
 }
 

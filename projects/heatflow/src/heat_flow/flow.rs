@@ -16,7 +16,7 @@ impl HeatFlow {
         Self {
             area,
             data,
-            current: 0,
+            time: 0,
         }
     }
     pub fn get_w(&self) -> usize {
@@ -28,20 +28,20 @@ impl HeatFlow {
     pub fn get_z(&self) -> usize {
         self.data.shape()[2]
     }
-    pub fn get_current(&self) -> usize {
-        self.current % self.get_z()
+    #[inline]
+    fn get_z_index(&self) -> usize {
+        self.time % self.get_z()
     }
     pub fn sampling(&mut self, point: Point<f32>, weight: f32) {
         let x = ((point.x - self.area.anchor.x) / self.area.side.0 * self.get_w() as f32).floor() as usize;
         let y = ((point.y - self.area.anchor.y) / self.area.side.1 * self.get_h() as f32).floor() as usize;
-        if let Some(s) = self.data.get_mut([x, y, self.get_current()]) {
-            *s += weight;
-        }
+        let z = self.get_z_index();
+        self.data[[x, y, z]] += weight;
     }
     pub fn time_fly(&mut self) {
-        self.current += 1;
+        self.time += 1;
         // make z-index = self.current all zero
-        self.data.slice_mut(s![.., .., self.get_current()]).fill(0.0);
+        self.data.slice_mut(s![.., .., self.get_z_index()]).fill(0.0);
     }
 
 
@@ -52,7 +52,7 @@ impl HeatFlow {
             match result.get_mut([p.x, p.y]) {
                 Some(s) => {
                     *s += zs.sum()
-                },
+                }
                 None => {}
             }
         }
@@ -61,7 +61,7 @@ impl HeatFlow {
         HeatMap {
             area: self.area,
             data: result,
-            time: self.get_z(),
+            time: self.time,
             range: min..max,
         }
     }

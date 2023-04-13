@@ -1,6 +1,22 @@
 use std::fmt::{Display, Write};
 use super::*;
 
+struct Times<'i> {
+    terms: &'i [usize],
+}
+
+impl<'i> Debug for Times<'i> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        for (i, x) in self.terms.iter().enumerate() {
+            if i != 0 {
+                f.write_str(" × ")?;
+            }
+            write!(f, "{}", x)?;
+        }
+        Ok(())
+    }
+}
+
 impl<'i> Debug for LineView<'i> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         f.write_char('[')?;
@@ -18,8 +34,11 @@ impl<'i> Debug for LineView<'i> {
 
 impl Debug for HeatMap {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        let lines: Vec<LineView> = self.data.axis_iter(Axis(0)).map(|line| LineView { line }).collect();
+        let lines: Vec<LineView> = self.data.axis_iter(Axis(1)).map(|line| LineView { line }).collect();
+        let (w, h) = self.data.dim();
+        let size = Times { terms: &[w, h] };
         f.debug_struct("HeatMap")
+            .field("size", &size)
             .field("x", &Range {
                 start: self.area.anchor.x,
                 end: self.area.anchor.x + self.area.side.0,
@@ -28,8 +47,7 @@ impl Debug for HeatMap {
                 start: self.area.anchor.y,
                 end: self.area.anchor.y + self.area.side.1,
             })
-            .field("size", &self.data.shape()[0])
-            .field("h", &self.data.shape()[0])
+            .field("time", &self.time)
             .field("data", &lines)
             .finish()
     }
