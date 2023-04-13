@@ -1,8 +1,9 @@
 use std::fmt::{Debug, Formatter};
 use std::ops::Range;
-use ndarray::{Array2, Array3, ArrayView1, ArrayView2, Axis, s};
+use ndarray::{Array2, Array3, ArrayView1, Axis, s};
 use shape_core::{Point, Rectangle};
 
+pub mod iters;
 
 /// A `w × h × z` tensor which stores the frequency on each grid.
 pub struct HeatFlow {
@@ -19,12 +20,6 @@ pub struct HeatMap {
     range: Range<f32>,
 }
 
-pub struct HeatFlowViewZ<'a> {
-    data: ArrayView2<'a, f32>,
-    z_index: usize,
-}
-
-impl
 
 impl Debug for HeatMap {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
@@ -88,16 +83,15 @@ impl HeatFlow {
         self.data.slice_mut(s![.., .., self.current]).fill(0.0);
     }
 
-    /// View values on z-index
-    pub fn view_zs(&self) -> ArrayView1<ArrayView1<f32>> {
-
-    }
 
     // add value over z-index
     pub fn as_heatmap(&self) -> HeatMap {
         let mut result = Array2::zeros((self.get_w(), self.get_h()));
-        for z in self.view_zs() {
-            result += z.sum()
+        for (x, y, zs) in self.view_z() {
+            let sum = zs.iter().sum::<f32>();
+            if let Some(s) = result.get_mut([x, y]) {
+                *s = sum;
+            }
         }
         HeatMap {
             area: self.area,
