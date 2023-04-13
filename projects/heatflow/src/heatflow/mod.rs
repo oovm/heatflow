@@ -1,4 +1,6 @@
-use ndarray::{Array2, Array3, ArrayView2, s};
+use std::fmt::{Debug, Formatter};
+use std::ops::Range;
+use ndarray::{Array2, Array3, ArrayView1, ArrayView2, Axis, s};
 use shape_core::{Point, Rectangle};
 
 
@@ -13,6 +15,43 @@ pub struct HeatFlow {
 pub struct HeatMap {
     area: Rectangle<f32>,
     data: Array2<f32>,
+    time: usize,
+    range: Range<f32>,
+}
+
+pub struct HeatFlowViewZ<'a> {
+    data: ArrayView2<'a, f32>,
+    z_index: usize,
+}
+
+impl
+
+impl Debug for HeatMap {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        let mut lines = self.lines().map(|line| {
+            line.iter().map(|x| format!("{:.2}", x)).collect::<Vec<_>>().join(", ")
+        }).collect::<Vec<_>>();
+
+        f.debug_struct("HeatMap")
+            .field("x", &Range {
+                start: self.area.anchor.x,
+                end: self.area.anchor.x + self.area.side.0,
+            })
+            .field("y", &Range {
+                start: self.area.anchor.y,
+                end: self.area.anchor.y + self.area.side.1,
+            })
+            .field("w", &self.data.shape()[0])
+            .field("h", &self.data.shape()[0])
+            .field("data", &lines)
+            .finish()
+    }
+}
+
+impl HeatMap {
+    pub fn lines(&self) -> impl Iterator<Item=ArrayView1<f32>> {
+        self.data.axis_iter(Axis(0))
+    }
 }
 
 impl HeatFlow {
@@ -49,26 +88,32 @@ impl HeatFlow {
         self.data.slice_mut(s![.., .., self.current]).fill(0.0);
     }
 
+    /// View values on z-index
+    pub fn view_zs(&self) -> ArrayView1<ArrayView1<f32>> {
+
+    }
+
     // add value over z-index
     pub fn as_heatmap(&self) -> HeatMap {
-        let w = self.data.shape()[0];
-        let h = self.data.shape()[1];
-        let mut result = Array2::zeros((w, h));
-        for z in 0..self.data.shape()[2] {
-            result += &self.data.slice(s![.., .., z]);
+        let mut result = Array2::zeros((self.get_w(), self.get_h()));
+        for z in self.view_zs() {
+            result += z.sum()
         }
         HeatMap {
             area: self.area,
             data: result,
+            time: self.get_z(),
+            range: 0.0..1.0,
         }
     }
 }
 
 #[test]
 pub fn test() {
-    let mut map = HeatFlow::new(Rectangle::new(Point::new(0.0, 0.0), (10.0, 10.0)), 1.0, 10);
+    let mut map = HeatFlow::new(Rectangle::new(Point::new(0.0, 0.0), (8.0, 6.0)), 1.0, 5);
     map.sampling(Point::new(0.5, 0.5), 1.0);
     map.time_fly();
     map.sampling(Point::new(0.5, 0.5), 1.0);
-    println!("{:?}", map.as_heatmap().data);
+    println!("{:?}", map.data.shape());
+    println!("{:#?}", map.as_heatmap());
 }
