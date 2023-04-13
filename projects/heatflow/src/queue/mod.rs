@@ -5,8 +5,7 @@ pub mod iters;
 
 /// A first-in-first-out queue with fixed size.
 pub struct Circular<T> {
-    pointer: NonNull<T>,
-    capacity: usize,
+    data: Box<[T]>,
     current: usize,
 }
 
@@ -17,17 +16,13 @@ impl<T: Default> Circular<T> {
         assert_ne!(capacity, 0, "Cannot create an empty queue");
         // SAFETY: We are allocating memory for the queue and initializing it with default values.
         unsafe {
-            let pointer = std::alloc::alloc(std::alloc::Layout::array::<T>(capacity).expect("Invalid capacity"));
-            if pointer.is_null() {
-                panic!("Out of memory");
-            }
-            let pointer = NonNull::new_unchecked(pointer as *mut T);
+            let mut data = Vec::with_capacity(capacity);
+            data.set_len(capacity);
             for i in 0..capacity {
-                std::ptr::write(pointer.as_ptr().add(i), T::default());
+                std::ptr::write(data.as_mut_ptr().add(i), T::default());
             }
             Self {
-                pointer,
-                capacity,
+                data: data.into_boxed_slice(),
                 current: 0,
             }
         }
