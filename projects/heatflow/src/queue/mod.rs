@@ -12,7 +12,7 @@ pub struct Circular<const N: usize, T> {
 }
 
 
-impl<T: Default> Circular<T> {
+impl<const N: usize, T: Default> Circular<N, T> {
     /// Creates a new FIFO with the given capacity.
     pub fn new(capacity: usize) -> Self {
         assert_ne!(capacity, 0, "Cannot create an empty queue");
@@ -32,7 +32,7 @@ impl<T: Default> Circular<T> {
     }
 }
 
-impl<T> Circular<T> {
+impl<const N: usize, T> Circular<N, T> {
     /// Pushes a new element to the queue, it will overwrite the oldest element.
     pub fn push(&mut self, element: T) {
         // SAFETY: We are writing to a valid memory location.

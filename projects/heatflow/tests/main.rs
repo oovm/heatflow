@@ -7,13 +7,13 @@ fn ready() {
 
 #[test]
 pub fn keep_size() {
-    assert_eq!(std::mem::size_of::<Circular<()>>(), 24);
-    assert_eq!(std::mem::size_of::<Circular<i128>>(), 24);
+    assert_eq!(std::mem::size_of::<Circular<5, ()>>(), 24);
+    assert_eq!(std::mem::size_of::<Circular<5, i128>>(), 24);
 }
 
 #[test]
 pub fn test() {
-    let mut queue = Circular::<i128>::new(5);
+    let mut queue = Circular::<5, i128>::new(5);
     println!("{:?}", queue);
     for i in 1..=10 {
         queue.push(i);

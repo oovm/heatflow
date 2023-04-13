@@ -1,16 +1,16 @@
 use super::*;
 
-pub struct GetCircular<'a, T> {
-    queue: &'a Circular<T>,
+pub struct GetCircular<'a, const N: usize,T> {
+    queue: &'a  Circular<N, T>,
     index: usize,
 }
 
-pub struct MutCircular<'a, T> {
-    queue: &'a mut Circular<T>,
+pub struct MutCircular<'a, const N: usize,T> {
+    queue: &'a mut  Circular<N, T>,
     index: usize,
 }
 
-impl<'a, T> Iterator for GetCircular<'a, T> {
+impl<'a, const N: usize,T> Iterator for GetCircular<'a, N, T> {
     type Item = &'a T;
     fn next(&mut self) -> Option<Self::Item> {
         if self.index >= self.queue.capacity() {
@@ -22,7 +22,7 @@ impl<'a, T> Iterator for GetCircular<'a, T> {
     }
 }
 
-impl<'a, T> Iterator for MutCircular<'a, T> {
+impl<'a, const N: usize,T> Iterator for MutCircular<'a, N, T> {
     type Item = &'a mut T;
     fn next(&mut self) -> Option<Self::Item> {
         if self.index >= self.queue.capacity() {
@@ -36,14 +36,14 @@ impl<'a, T> Iterator for MutCircular<'a, T> {
     }
 }
 
-impl<T> Circular<T> {
-    pub fn get_items(&self) -> GetCircular<T> {
+impl<const N: usize, T> Circular<N, T> {
+    pub fn get_items(&self) -> GetCircular<N, T> {
         GetCircular {
             queue: self,
             index: 0,
         }
     }
-    pub fn mut_items(&mut self) -> MutCircular<T> {
+    pub fn mut_items(&mut self) -> MutCircular<N, T> {
         MutCircular {
             queue: self,
             index: 0,
