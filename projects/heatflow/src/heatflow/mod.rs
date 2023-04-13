@@ -4,6 +4,7 @@ use ndarray::{Array2, Array3, ArrayView1, Axis, s};
 use shape_core::{Point, Rectangle};
 
 pub mod iters;
+mod display;
 
 /// A `w × h × z` tensor which stores the frequency on each grid.
 pub struct HeatFlow {
@@ -20,28 +21,10 @@ pub struct HeatMap {
     range: Range<f32>,
 }
 
-
-impl Debug for HeatMap {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        let mut lines = self.lines().map(|line| {
-            line.iter().map(|x| format!("{:.2}", x)).collect::<Vec<_>>().join(", ")
-        }).collect::<Vec<_>>();
-
-        f.debug_struct("HeatMap")
-            .field("x", &Range {
-                start: self.area.anchor.x,
-                end: self.area.anchor.x + self.area.side.0,
-            })
-            .field("y", &Range {
-                start: self.area.anchor.y,
-                end: self.area.anchor.y + self.area.side.1,
-            })
-            .field("w", &self.data.shape()[0])
-            .field("h", &self.data.shape()[0])
-            .field("data", &lines)
-            .finish()
-    }
+pub struct LineView<'i> {
+    line: ArrayView1<'i, f32>,
 }
+
 
 impl HeatMap {
     pub fn lines(&self) -> impl Iterator<Item=ArrayView1<f32>> {

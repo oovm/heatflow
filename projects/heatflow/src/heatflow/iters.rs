@@ -17,12 +17,12 @@ impl<'i> Iterator for HeatFlowViewZ<'i> {
     type Item = (usize, usize, ArrayView1<'i, f32>);
 
     fn next(&mut self) -> Option<Self::Item> {
-        if self.current_y > self.tensor.get_h() {
+        if self.current_y >= self.tensor.get_h() {
             return None;
         }
         let result = self.tensor.slice_z(self.current_x, self.current_y);
         self.current_x += 1;
-        if self.current_x > self.tensor.get_w() {
+        if self.current_x >= self.tensor.get_w() {
             self.current_x = 0;
             self.current_y += 1;
         }
