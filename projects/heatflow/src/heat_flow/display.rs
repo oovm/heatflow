@@ -1,4 +1,4 @@
-use std::fmt::Write;
+use std::fmt::{Display, Write};
 use super::*;
 
 impl<'i> Debug for LineView<'i> {
@@ -28,9 +28,16 @@ impl Debug for HeatMap {
                 start: self.area.anchor.y,
                 end: self.area.anchor.y + self.area.side.1,
             })
-            .field("w", &self.data.shape()[0])
+            .field("size", &self.data.shape()[0])
             .field("h", &self.data.shape()[0])
             .field("data", &lines)
             .finish()
+    }
+}
+
+impl Display for HeatMap {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        let lines: Vec<LineView> = self.data.axis_iter(Axis(0)).map(|line| LineView { line }).collect();
+        f.debug_list().entries(lines).finish()
     }
 }
