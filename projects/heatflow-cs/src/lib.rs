@@ -1,10 +1,30 @@
-mod errors;
+use std::collections::HashSet;
+use std::ffi::c_void;
 
+#[no_mangle]
+pub extern "C" fn create_counter_context() -> *mut c_void {
+    let ctx = Box::new(CounterContext {
+        set: HashSet::new(),
+    });
+    Box::into_raw(ctx) as *mut c_void
+}
 
-pub use errors::{Error, Result};
+#[no_mangle]
+pub unsafe extern "C" fn insert_counter_context(context: *mut c_void, value: i32) {
+    let mut counter = Box::from_raw(context as *mut CounterContext);
+    counter.set.insert(value);
+    Box::into_raw(counter);
+}
 
-mod queue;
-mod heat_flow;
+#[no_mangle]
+pub unsafe extern "C" fn delete_counter_context(context: *mut c_void) {
+    let counter = Box::from_raw(context as *mut CounterContext);
+    for value in counter.set.iter() {
+        println!("counter value: {}", value)
+    }
+}
 
-pub use crate::queue::{Circular, iters::{GetCircular, MutCircular}};
-pub use crate::heat_flow::{HeatFlow, iters::{HeatFlowViewZ}};
+#[repr(C)]
+pub struct CounterContext {
+    pub set: HashSet<i32>,
+}

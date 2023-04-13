@@ -9,6 +9,10 @@ readme = "Readme.md"
 license = "MPL-2.0"
 edition = "2021"
 
+[lib]
+name = "rs_heatflow"
+crate-type = ["cdylib"]
+
 [dependencies]
 ndarray = "0.15.6"
 shape-core = "0.1.3"
@@ -18,6 +22,7 @@ shape-core = "0.1.3"
 path = "../heatflow"
 
 [dev-dependencies]
+csbindgen = "1.6.0"
 
 [features]
 default = []

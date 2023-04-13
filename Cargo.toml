@@ -2,6 +2,7 @@
 members = ["projects/*"]
 default-members = [
     "projects/heatflow",
+    "projects/heatflow-cs",
 ]
 exclude = [
     "projects/.DS_Store",

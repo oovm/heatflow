@@ -1,24 +1,26 @@
-use heatflow::Circular;
+use std::path::Path;
 
 #[test]
 fn ready() {
     println!("it works!")
 }
 
-#[test]
-pub fn keep_size() {
-    assert_eq!(std::mem::size_of::<Circular<5, ()>>(), 16);
-    assert_eq!(std::mem::size_of::<Circular<5, i128>>(), 16);
-}
 
 #[test]
-pub fn test() {
-    let mut queue = Circular::<8, i128>::new();
-    println!("{:?}", queue);
-    for i in 1..10 {
-        queue.push(i);
-        println!("{:?}", queue);
-    }
-    println!("oldest: {}", queue.oldest());
-    println!("newest: {}", queue.newest());
+pub fn build_cs() -> std::io::Result<()> {
+    let here = Path::new(env!("CARGO_MANIFEST_DIR")).canonicalize()?;
+    println!("Working directory: {}", here.display());
+    csbindgen::Builder::default()
+        .input_extern_file(here.join("src/lib.rs").canonicalize()?.to_string_lossy())        // required
+        .csharp_dll_name("rs_heatflow")         // required
+        .csharp_class_name("RsMethods")     // optional, default: NativeMethods
+        .csharp_namespace("RsBind")          // optional, default: CsBindgen
+        .csharp_class_accessibility("internal") // optional, default: internal
+        .csharp_entry_point_prefix("")          // optional, default: ""
+        .csharp_method_prefix("")               // optional, default: ""
+        .csharp_use_function_pointer(true)      // optional, default: true
+        // .csharp_dll_name_if("UNITY_IOS && !UNITY_EDITOR", "__Internal")
+        .generate_csharp_file(here.join("binding/RsMethods.cs"))     // required
+        .unwrap();
+    Ok(())
 }
