@@ -15,13 +15,6 @@ pub unsafe extern "C" fn delete_heat_flow(heat_flow: *mut c_void) {
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn heat_flow_as_heat_map(heat_flow: *mut c_void) -> *mut c_void {
-    let mut cs_object = Box::from_raw(heat_flow as *mut HeatFlow);
-    let object = box cs_object.as_heatmap();
-    Box::into_raw(object) as *mut c_void
-}
-
-#[no_mangle]
 pub unsafe extern "C" fn heat_flow_time_fly(heat_flow: *mut c_void) {
     let mut cs_object = Box::from_raw(heat_flow as *mut HeatFlow);
     cs_object.time_fly()
@@ -34,7 +27,37 @@ pub unsafe extern "C" fn heat_flow_sampling(heat_flow: *mut c_void, x: f32, y: f
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn heat_flow_get_w(heat_flow: *mut c_void) -> usize {
+pub unsafe extern "C" fn heat_flow_get_x(heat_flow: *mut c_void) -> usize {
     let cs_object = Box::from_raw(heat_flow as *mut HeatFlow);
     cs_object.get_w()
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn heat_flow_get_y(heat_flow: *mut c_void) -> usize {
+    let cs_object = Box::from_raw(heat_flow as *mut HeatFlow);
+    cs_object.get_h()
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn heat_flow_get_cw(heat_flow: *mut c_void) -> usize {
+    let cs_object = Box::from_raw(heat_flow as *mut HeatFlow);
+    cs_object.get_w()
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn heat_flow_get_ch(heat_flow: *mut c_void) -> usize {
+    let cs_object = Box::from_raw(heat_flow as *mut HeatFlow);
+    cs_object.get_h()
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn heat_flow_get_z(heat_flow: *mut c_void) -> usize {
+    let cs_object = Box::from_raw(heat_flow as *mut HeatFlow);
+    cs_object.get_z()
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn heat_flow_get_t(heat_flow: *mut c_void) -> usize {
+    let cs_object = Box::from_raw(heat_flow as *mut HeatFlow);
+    cs_object.get_time()
 }

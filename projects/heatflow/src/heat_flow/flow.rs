@@ -19,6 +19,9 @@ impl HeatFlow {
             time: 0,
         }
     }
+    pub fn get_area(&self) -> Rectangle<f32> {
+        self.area
+    }
     pub fn get_w(&self) -> usize {
         self.data.shape()[0]
     }
@@ -32,6 +35,11 @@ impl HeatFlow {
     fn get_z_index(&self) -> usize {
         self.time % self.get_z()
     }
+    pub fn get_time(&self) -> usize {
+        self.time
+    }
+
+
     pub fn sampling(&mut self, point: Point<f32>, weight: f32) {
         let x = ((point.x - self.area.anchor.x) / self.area.side.0 * self.get_w() as f32).floor() as usize;
         let y = ((point.y - self.area.anchor.y) / self.area.side.1 * self.get_h() as f32).floor() as usize;

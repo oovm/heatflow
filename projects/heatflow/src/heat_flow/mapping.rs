@@ -11,4 +11,7 @@ impl HeatMap {
     pub fn get_size(&self) -> usize {
         self.data.shape()[0]
     }
+    pub fn get_time(&self) -> usize {
+        self.time
+    }
 }
