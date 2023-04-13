@@ -47,7 +47,8 @@ impl HeatFlow {
         self.data[[x, y, z]] += weight;
     }
     pub fn time_fly(&mut self) {
-        self.time += 1;
+        // avoid overflow when time reaches usize::MAX
+        self.time = self.time.saturating_add(1);
         // make z-index = self.current all zero
         self.data.slice_mut(s![.., .., self.get_z_index()]).fill(0.0);
     }

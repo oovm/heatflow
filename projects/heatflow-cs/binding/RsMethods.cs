@@ -25,23 +25,9 @@ namespace RsBind
         [DllImport(__DllName, EntryPoint = "heat_flow_sampling", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void heat_flow_sampling(void* heat_flow, float x, float y, float weight);
 
-        [DllImport(__DllName, EntryPoint = "heat_flow_get_x", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern nuint heat_flow_get_x(void* heat_flow);
-
-        [DllImport(__DllName, EntryPoint = "heat_flow_get_y", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern nuint heat_flow_get_y(void* heat_flow);
-
-        [DllImport(__DllName, EntryPoint = "heat_flow_get_cw", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern nuint heat_flow_get_cw(void* heat_flow);
-
-        [DllImport(__DllName, EntryPoint = "heat_flow_get_ch", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern nuint heat_flow_get_ch(void* heat_flow);
-
-        [DllImport(__DllName, EntryPoint = "heat_flow_get_z", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern nuint heat_flow_get_z(void* heat_flow);
-
+        /// <summary>Get time from heat flow</summary>
         [DllImport(__DllName, EntryPoint = "heat_flow_get_t", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern nuint heat_flow_get_t(void* heat_flow);
+        public static extern ulong heat_flow_get_t(void* heat_flow);
 
         [DllImport(__DllName, EntryPoint = "heat_flow_as_heat_map", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void* heat_flow_as_heat_map(void* heat_flow);
@@ -50,7 +36,7 @@ namespace RsBind
         public static extern void delete_heat_map(void* heat_map);
 
         [DllImport(__DllName, EntryPoint = "heat_map_get_t", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern nuint heat_map_get_t(void* heat_map);
+        public static extern ulong heat_map_get_t(void* heat_map);
 
         [DllImport(__DllName, EntryPoint = "heat_map_get_w", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern nuint heat_map_get_w(void* heat_map);
